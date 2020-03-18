@@ -22,7 +22,7 @@ void find_prefix(char str[], int prefix[], int n)
   }
 }
 
-void to_kmp_key(int prefix[], int n)
+void move_prefix_table(int prefix[], int n)
 {
   for (int i = n-1; i > 0; i--)
   {
@@ -31,49 +31,48 @@ void to_kmp_key(int prefix[], int n)
   prefix[0] = -1;
 }
 
-int kmp(char parent[], char prefix[], int kmp[], int n)
+void kmp_search(char parent[], char prefix[])
 {
-  int p_n = strlen(parent);
-  printf("p_n %d\n", p_n);
+  int n = strlen(prefix);
+  int *kmp = malloc(sizeof(int) * n);
+  find_prefix(prefix, kmp, n);
+  move_prefix_table(kmp, n);
+  int m = strlen(parent);
   int i = 0;
   int j = 0;
-  while (i < p_n)
+  while (i < m)
   {
-    while (parent[i] == prefix[j])
+    if (j == n - 1 && parent[i] == prefix[j])
+    {
+      printf("find %d\n", i - j);
+      j = kmp[j];
+      if (j == -1)
+      {
+        i++;
+        j++;
+      }
+    }
+    if (parent[i] == prefix[j])
     {
       j++;
-      printf("i %d\n", i);
-      printf("j %d\n", j);
-      printf("n %d\n", n);
-      if (j > n - 1)
+      i++;
+    }
+    else
+    {
+      j = kmp[j];
+      if (j == -1)
       {
-        printf("find:");
-        return i;
-      }
-      else
-      {
-        j = kmp[j];
         i++;
+        j++;
       }
     }
   }
-  printf("not find:");
-  return -1;
 }
 
 int main()
 {
-  char parent[] = "befaabcdabcdfeefe";
-  char str[] = "abcdabcdf";
-  int n = strlen(str);
-  int *i_result = malloc(sizeof(int) * n);
-  find_prefix(str, i_result, n);
-  to_kmp_key(i_result, n);
-  // for (int i = 0; i < n; i++)
-  // {
-  //   printf("%d\n", i_result[i]);
-  // }
-  int position = kmp(parent, str, i_result, n);
-  printf("%d\n", position);
+  char pattern[] = "b";
+  char text[] = "abc";
+  kmp_search(text, pattern);
   return 0;
 }
