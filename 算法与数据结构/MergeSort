@@ -1,0 +1,62 @@
+public class MergeSort {
+    //分治思想 二分法
+    //归并，两两最后合并
+    public void sort(int[] arr){
+        sort(arr,0,arr.length-1);
+    }
+
+    //分治
+    private void sort(int[] arr,int left,int right){
+        if(left >= right){
+            return;
+        }
+
+        int mid = left + (right - left) / 2;
+
+        sort(arr,left,mid);
+        sort(arr,mid+1,left);
+
+        merge(arr,left,mid+1,right);
+    }
+
+    //合并
+    private void merge(int[] nums,int left,int mid,int right){
+        int leftSize = mid - left;
+        int rightSize = right - mid + 1;
+
+        int[] arrLeft = new int[leftSize];
+        for (int i = left; i < mid; i++) {
+            arrLeft[i - left] = nums[i];
+        }
+
+        int[] arrRight = new int[rightSize];
+        for (int i = mid; i <= right; i++) {
+            arrRight[i - mid] = nums[i];
+        }
+
+        int i = 0, j = 0, k = left;
+        while (i < leftSize && j < rightSize){
+            if(arrLeft[i] < arrRight[j]){
+                nums[k] =  arrLeft[i];
+                k++;
+                i++;
+            }else {
+                nums[k] = arrRight[j];
+                j++;
+                k++;
+            }
+        }
+
+        while (i < leftSize) {
+            nums[k] =  arrLeft[i];
+            k++;
+            i++;
+        }
+
+        while (j < rightSize) {
+            nums[k] = arrRight[j];
+            j++;
+            k++;
+        }
+    }
+}
